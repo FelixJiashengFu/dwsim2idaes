@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dwsim2idaes"
+version = "0.1.0"
+description = "Convert DWSIM flowsheets into equation-oriented IDAES/Pyomo models"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "BSD-3-Clause" }
+authors = [{ name = "dwsim2idaes contributors" }]
+keywords = ["DWSIM", "IDAES", "Pyomo", "process simulation", "equation-oriented", "flowsheet"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Intended Audience :: Science/Research",
+]
+dependencies = ["idaes-pse>=2.8", "numpy"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/FelixJiashengFu/dwsim2idaes"
+
+[project.scripts]
+dwsim2idaes = "dwsim2idaes.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["solve: tests that build and solve an IDAES model (need ipopt)"]
