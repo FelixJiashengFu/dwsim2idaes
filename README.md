@@ -141,24 +141,39 @@ DWSIM's vapour pressure and heat of vaporisation correlations) and
 
 Every one of the 175 sample flowsheets in the DWSIM repository was read
 without error. With `--cut-unsupported`, 60 of them contain something to
-convert; the others consist only of unsupported units, use an unsupported
-property package (NRTL, UNIQUAC, UNIFAC, steam tables, ...) or several
-packages at once. The results of solving those 60 conversions and comparing
-them with the DWSIM results stored in the files are in
-[`docs/validation.md`](docs/validation.md).
+convert (6 of them completely, nothing cut); the others consist only of
+unsupported units, use an unsupported property package (NRTL, UNIQUAC,
+UNIFAC, steam tables, ...) or several packages at once. Of the 60:
 
-Highlights for complete flowsheets (nothing cut out):
+| outcome | samples |
+|---|---|
+| solved, and within 1 K, 1% flow and 1% duty of DWSIM everywhere | 22 |
+| solved, but with larger deviations somewhere | 19 |
+| IPOPT stopped at the iteration limit | 14 |
+| IPOPT reported the problem infeasible | 2 |
+| IPOPT crashed (all three are SRK models) | 3 |
 
-- **Cavett's problem** (12 units, 15 compounds, PR, nested recycles): solved in
-  about 30 s; flows within 0.01%, the three compressor powers within 0.04%,
-  temperatures within 0.02 K except one flash liquid where DWSIM's own outlet
-  is 1 K below the vessel temperature it reports.
-- **Compression and expansion** (8 compressors/expanders, PR): powers within
-  0.2%, outlet temperatures within 0.15 K (two dense-phase expanders cut, see
-  limitations).
-- **Collins helium liquefier** (22 units, ideal): duties and powers within
-  0.5% except two units where pure helium condenses (cut, see limitations).
+"Solved" is not the same as "agrees with DWSIM": the 19 solved samples with
+larger deviations include files with contradictory specifications, a
+dynamic-simulation sample, two-phase feeds of nearly pure fluids and units where
+DWSIM found two liquid phases. The full table is in
+[`docs/validation.md`](docs/validation.md) (regenerate it with
+`validation/run_samples.py`).
+
+Highlights:
+
+- **Cavett's problem** (12 units, 15 compounds, PR, nested recycles, nothing
+  cut): solved in about 35 s; flows within 0.01%, the three compressor powers
+  within 0.04%, temperatures within 0.02 K except one flash liquid where
+  DWSIM's own outlet is 1 K below the vessel temperature it reports.
+- **Compression and expansion** (6 units converted, PR):
+  powers within 0.2%, outlet temperatures within 0.15 K (two dense-phase
+  expanders cut, see limitations).
 - **Humid air cooled to its dew point** (PR): dew point exact, duty 0.1%.
+- **Collins helium liquefier** (20 units converted, ideal; two units where
+  pure helium condenses are cut): temperatures within 1.8 K, but the
+  circulating helium flow comes out 2.6% above DWSIM's and the duties and
+  powers follow it (within 3%). The cause has not been pinned down yet.
 
 Two things to keep in mind when reading the comparison: DWSIM's own results
 are only as converged as its recycle tolerances (some sample files close
@@ -175,8 +190,8 @@ IDAES model, which has one liquid phase, must deviate.
   Peng-Robinson is mapped with the standard PR departure functions even
   when the DWSIM file asks for Lee-Kesler enthalpies.
 - **SRK is experimental:** IPOPT terminated with a segmentation fault on 3 of
-  the 5 SRK samples, while the same flowsheets solve with Peng-Robinson. The
-  cause has not been found yet.
+  the 4 converted SRK samples, while the same flowsheets solve with
+  Peng-Robinson. The cause has not been found yet.
 - **Pure fluids that change phase** inside a unit cannot be described with
   temperature and pressure as state variables (the phase split of a boiling
   pure fluid is not fixed by T and P). Such units are refused or cut. A
