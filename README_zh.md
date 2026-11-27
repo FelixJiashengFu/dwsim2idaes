@@ -1,8 +1,9 @@
 # dwsim2idaes
 
-**把 DWSIM 流程文件自动转换成方程导向的 IDAES / Pyomo 模型。**
+**把 DWSIM 流程文件自动转换成方程导向的 IDAES / Pyomo 模型。**<br>
+**Convert DWSIM flowsheets into equation-oriented IDAES / Pyomo models.**
 
-[English](README.md)
+[English](README.md) · 中文
 
 [DWSIM](https://dwsim.org) 是免费的序贯模块法流程模拟软件：一个单元接一个单元地算，遇到循环就反复迭代。
 [IDAES](https://idaes.org) 则把整个流程写成 [Pyomo](https://www.pyomo.org) 里的一个大方程组，用 IPOPT 这类牛顿型求解器一次性解出。

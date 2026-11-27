@@ -1,8 +1,11 @@
 # dwsim2idaes
 
-**Convert DWSIM flowsheets into equation-oriented IDAES / Pyomo models.**
+**Convert DWSIM flowsheets into equation-oriented IDAES / Pyomo models.**<br>
+**把 DWSIM 流程文件自动转换成方程导向的 IDAES / Pyomo 模型。**
 
-[中文说明](README_zh.md)
+[English](#install--安装) · [中文完整说明](README_zh.md)
+
+## About · 简介
 
 [DWSIM](https://dwsim.org) is a free, sequential-modular process simulator: it
 calculates one unit operation after another and iterates around recycles.
@@ -12,14 +15,19 @@ of equations in [Pyomo](https://www.pyomo.org), which a Newton-type solver
 optimisation, parameter estimation, sensitivity analysis or design studies with
 many degrees of freedom, but writing an IDAES model by hand for a flowsheet
 that already exists in DWSIM is tedious and error-prone.
-
 `dwsim2idaes` reads a DWSIM file (`.dwxmz` or `.dwxml`) and writes a plain,
 readable Python script that builds the equivalent IDAES flowsheet, fixes the
 same specifications, initialises it from the converged DWSIM solution, solves
 it, and compares every stream with the values DWSIM stored in the file.
-
 We searched GitHub, the IDAES community pages and recent papers and did not
 find another tool that does this conversion.
+
+[DWSIM](https://dwsim.org) 是免费的序贯模块法流程模拟软件：一个单元接一个单元地算，遇到循环就反复迭代。
+[IDAES](https://idaes.org) 则把整个流程写成 [Pyomo](https://www.pyomo.org) 里的一个大方程组，用 IPOPT 这类牛顿型求解器一次性解出。
+做优化、参数估计、灵敏度分析或者自由度很多的设计研究，需要的正是后一种形式；但对着一个已经在 DWSIM 里搭好的流程再手写一遍 IDAES 模型，既费时又容易出错。
+`dwsim2idaes` 读取 DWSIM 文件（`.dwxmz` 或 `.dwxml`），生成一个可读的 Python 脚本：搭出等价的 IDAES 流程、固定和 DWSIM 相同的规定量、用 DWSIM 已收敛的结果做初值、求解，并把每一股物流和文件里存的 DWSIM 结果逐项对比。
+我们在 GitHub、IDAES 社区和近年论文里检索过，没有找到做同样转换的工具。
+安装、用法、原理、支持范围、验证结果和局限的中文版见 [README_zh.md](README_zh.md)。
 
 ```text
 $ dwsim2idaes validate "Cavett's Problem.dwxmz"
@@ -28,11 +36,11 @@ $ dwsim2idaes validate "Cavett's Problem.dwxmz"
 solver status: optimal (33 s)
 19 calculated streams compared: max |dT| = 0.966 K (0.31%), max |dP| = 0.00%,
 max |dF| = 0.01%, max |d vapour fraction| = 0.006, max |dx| = 3.1e-05
-COOL-001  work_mechanical   7.29781e+06   7.30077e+06    0.04%
+COMP-001  work_mechanical   7.29781e+06   7.30077e+06    0.04%
 ...
 ```
 
-## Install
+## Install · 安装
 
 ```bash
 pip install git+https://github.com/FelixJiashengFu/dwsim2idaes
@@ -43,7 +51,7 @@ Python 3.10 or newer and IDAES 2.8 or newer are needed (developed with IDAES
 2.13 and Pyomo 6.11). DWSIM itself is **not** needed: the converter only reads
 the file.
 
-## Use
+## Use · 用法
 
 ```bash
 dwsim2idaes inspect  plant.dwxmz              # what is in the file, can it be converted?
@@ -80,7 +88,7 @@ file), `STREAMS` (the DWSIM results, used as initial guess and reference) and
 `initialize()` are short and meant to be edited. See
 [`examples/`](examples/) for two generated scripts.
 
-## How it works
+## How it works · 原理
 
 1. **Read** the XML inside the file: compounds with their constants and
    temperature-dependent correlations, the property package and its binary
@@ -109,7 +117,7 @@ file), `STREAMS` (the DWSIM results, used as initial guess and reference) and
 6. **Compare** every calculated stream (T, P, flow, vapour fraction,
    composition) and every duty and power with DWSIM.
 
-## What is supported
+## What is supported · 支持范围
 
 | DWSIM | IDAES | DWSIM calculation modes |
 |---|---|---|
@@ -129,7 +137,7 @@ complementarity VLE), **Raoult's law / ideal** (ideal gas + ideal liquid with
 DWSIM's vapour pressure and heat of vaporisation correlations) and
 **Soave-Redlich-Kwong** (experimental, see below).
 
-## Validation
+## Validation · 验证
 
 Every one of the 175 sample flowsheets in the DWSIM repository was read
 without error. With `--cut-unsupported`, 60 of them contain something to
@@ -157,7 +165,7 @@ are only as converged as its recycle tolerances (some sample files close
 their mass balance only to 0.3%), and where DWSIM found two liquid phases the
 IDAES model, which has one liquid phase, must deviate.
 
-## Limitations and roadmap
+## Limitations and roadmap · 局限和后续计划
 
 - **Not yet converted:** distillation and absorption columns, reactors,
   component separators, CAPE-OPEN and scripted units, three-phase vessels,
@@ -187,7 +195,7 @@ IDAES model, which has one liquid phase, must deviate.
 Contributions of further unit mappings and property packages are welcome;
 `tests/fixture.py` shows how to build small synthetic DWSIM files for tests.
 
-## Development
+## Development · 开发
 
 ```bash
 pip install -e ".[dev]"
@@ -195,7 +203,7 @@ idaes get-extensions
 pytest                      # 27 tests; tests marked "solve" need IPOPT
 ```
 
-## License
+## License · 许可证
 
 BSD 3-Clause, see [LICENSE](LICENSE). DWSIM is a trademark of its authors and
 is distributed under the GPL; this package contains no DWSIM code and reads
